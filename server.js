@@ -90,7 +90,7 @@ function generateSession(nickname) {
 var server = net.createServer(function(socket) {
 
   var serverChallengeKey = randomString(10);
-
+  var sessKey = randomString(1024);
   var buffer = Buffer.from("\\lc\\1\\challenge\\"+serverChallengeKey+"\\id\\1\\final\\", 'ascii');
 	socket.write(buffer);
 
@@ -102,7 +102,16 @@ var server = net.createServer(function(socket) {
     var message = Buffer.from(data, 'hex');
     var recv = message.toString().split('\\');
 
-    console.log(recv);
+    var m = new Date();
+    var dateString =
+      m.getUTCFullYear() + "/" +
+      ("0" + (m.getUTCMonth()+1)).slice(-2) + "/" +
+      ("0" + m.getUTCDate()).slice(-2) + " " +
+      ("0" + m.getUTCHours()).slice(-2) + ":" +
+      ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+      ("0" + m.getUTCSeconds()).slice(-2);
+
+    console.log("["+dateString+"] "+recv);
 
     switch(recv[1]){
       case 'login':
@@ -116,7 +125,7 @@ var server = net.createServer(function(socket) {
         if(clientResponse == value) {
           var proof = responseValue(clientNick, 'asdf', serverChallengeKey, clientChallengeKey); // flip challenge values: server/client
           var lt = randomString(22)
-          var buffer = Buffer.from("\\lc\\2\\sesskey\\"+randomString(1024)+"\\proof\\"+proof+"\\userid\\1\\profileid\\1\\uniquenick\\asd\\lt\\"+lt+"__\\id\\1\\final\\", 'ascii');
+          var buffer = Buffer.from("\\lc\\2\\sesskey\\"+sessKey+"\\proof\\"+proof+"\\userid\\1\\profileid\\1\\uniquenick\\asd\\lt\\"+lt+"__\\id\\1\\final\\", 'ascii');
           socket.write(buffer);
         } else {
           var buffer = Buffer.from("\\error\\\\err\\260\\fatal\\\\errmsg\\The password provided is incorrect.\\id\\1\\final\\", 'ascii');
@@ -126,7 +135,20 @@ var server = net.createServer(function(socket) {
       break;
       case 'getprofile':
 
-        console.log('Trying getprofile...');
+        var retrieve = true;
+
+        var profileId = "1";
+        var nick = "asdf";
+        var userid = 1;
+        var email = "asdf@asdf.com";
+        var sig = randomString(32);
+        var uniquenick = "asdf";
+        var countrycode = "00";
+        var id = 2;
+
+        var buffer = "\\pi\\\\profileid\\"+profileId+"\\nick\\"+nick+"\\userid\\"+userid+"\\email\\"+email+"\\sig\\"+sig+"\\uniquenick\\"+uniquenick+"\\pid\\0\\firstname\\\\lastname\\" +
+        "\\countrycode\\"+countrycode+"\\birthday\\16844722\\lon\\0.000000\\lat\\0.000000\\loc\\\\id\\"+id+"\\final\\";
+        socket.write(buffer);
 
       break;
       case 'auth':
