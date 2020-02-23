@@ -35,16 +35,17 @@ var server = net.createServer(function(socket) {
       break;
       case 'getprofile':
 
-        var retrieve = 5;
-        var dbuserId = 1;
+        var retrieve = '2';
+        var dbuserId = '1';
         var dbuserEmail = "asdf@asdf.com";
-        var dbuserCountry = 00;
+        var dbuserCountry = '00';
         if(handleStep < 2) {
-          retrieve = 2;
+          retrieve = '5';
           handleStep++;
         }
         console.log('[getprofile retrieve]: '+retrieve);
-        bfutils.sendMsg( socket, { pi:'', profileid:dbuserId, nick:pMsg.uniquenick, userid:dbuserId, email:dbuserEmail, sig:bfutils.generateSig(), uniquenick:pMsg.uniquenick, pid:0, firstname:'', lastname:'', countrycode:dbuserCountry, birthday:16844722, lon:'0.000000', lat:'0.000000', loc:'', id:retrieve, } );
+        console.log('[handle step]: '+handleStep);
+        bfutils.sendMsg( socket, { pi:'', profileid:dbuserId, nick:pMsg.uniquenick, userid:dbuserId, email:dbuserEmail, sig:bfutils.generateSig(), uniquenick:pMsg.uniquenick, pid:0, firstname:'', lastname:'', homepage:'', zipcode:'12345', countrycode:dbuserCountry, st:'  ', birthday:'16844722', pmask:'64', conn:'0', i1:'0', o1:'0', mp:'0', lon:'0.000000', lat:'0.000000', loc:'', id:'2', } );
 
       break;
     }
